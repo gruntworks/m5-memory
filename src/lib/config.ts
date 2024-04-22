@@ -1,4 +1,6 @@
-export const GAME_DURATION = 40;
+import { browser } from '$app/environment';
+
+export const GAME_DURATION = 2;
 
 export const BASE_CARDS = [
 	'Axe',
@@ -22,30 +24,36 @@ export const EXTRA_CARDS = [
 	'SilverKey'
 ];
 
-export const PRIZES = {
-	0: 'Loptica',
-	5: 'Sticker',
-	10: 'Lepeza',
-	18: 'Notes',
-	20: 'Torba',
-	23: 'T-Shirt'
-};
+export const PRIZES = [
+	{ sec: 0, prize: 'Penkala' },
+	{ sec: 4, prize: 'Loptica' },
+	{ sec: 8, prize: 'Sticker' },
+	{ sec: 10, prize: 'Lepeza' },
+	{ sec: 16, prize: 'Notes' },
+	{ sec: 19, prize: 'Torba' },
+	{ sec: 22, prize: 'T-Shirt' }
+];
 
-export function getPrize(timeRemaining: number, prizes: { [key: number]: string }) {
-	let prize = 'No Prize';
+export function getPrize(timeRemaining: number): string {
+	const prizes: Array<{ sec: number; prize: string }> = getPrizesFromLocalStorage() ?? PRIZES;
 
-	// Convert the PRIZES object keys into numbers and sort them in descending order
-	const sortedKeys = Object.keys(prizes)
-		.map(Number)
-		.sort((a, b) => b - a);
+	const sortedPrizes = [...prizes].sort((b, a) => a.sec - b.sec);
 
-	// Find the closest key that is less than or equal to the remaining time
-	for (let i = 0; i < sortedKeys.length; i++) {
-		if (timeRemaining >= sortedKeys[i]) {
-			prize = prizes[sortedKeys[i]];
-			break;
-		}
+	const foundPrize = sortedPrizes.find(({ sec }) => timeRemaining >= sec);
+
+	return foundPrize ? foundPrize.prize : 'No Prize';
+}
+
+export function getPrizesFromLocalStorage(): Array<{ sec: number; prize: string }> | null {
+	if (!browser) return PRIZES;
+	const prizes = localStorage.getItem('PRIZES');
+	if (prizes) {
+		return JSON.parse(prizes);
 	}
+	return null;
+}
 
-	return prize;
+export function setPrizesToLocalStorage(prizes: Array<{ sec: number; prize: string }>): void {
+	const filteredPrizes = prizes.filter((prize) => !isNaN(prize.sec));
+	localStorage.setItem('PRIZES', JSON.stringify(filteredPrizes));
 }

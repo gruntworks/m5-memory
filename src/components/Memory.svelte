@@ -1,10 +1,18 @@
 <script lang="ts">
-	import { BASE_CARDS, GAME_DURATION, getPrize, PRIZES } from '$lib/config';
+	import {
+		BASE_CARDS,
+		GAME_DURATION,
+		getPrize,
+		getPrizesFromLocalStorage,
+		PRIZES,
+		setPrizesToLocalStorage
+	} from '$lib/config';
 	import MemoryCard from './MemoryCard.svelte';
 	import { addToDiscovered, discoveredItems } from '../stores/game.store';
 	import Timer from './Timer.svelte';
 	import { onMount } from 'svelte';
 	import { base } from '$app/paths';
+	import PrizeSettings from './PrizeSettings.svelte';
 
 	let flippedPair: Array<{ id: number; card: string }> = [];
 	let lockBoard: boolean = false;
@@ -12,6 +20,7 @@
 	let gameRunning = false;
 	let gameDuration = GAME_DURATION;
 	let remainingTime: number | null = null;
+	let openSettings: boolean = false;
 
 	const getCards = () => {
 		const cards = BASE_CARDS.flatMap((card) => [card, card]);
@@ -65,8 +74,14 @@
 		}
 	}
 
-	// PRELOAD ITEMS IMAGES
 	onMount(() => {
+		// GET/SET PRIZES FROM STORAGE
+		const prizes = getPrizesFromLocalStorage();
+		if (!prizes) {
+			setPrizesToLocalStorage(PRIZES);
+		}
+
+		// PRELOAD ITEMS IMAGES
 		const imagesToPreload = BASE_CARDS.map((name) => `${base}/items/${name}.png`);
 
 		imagesToPreload.forEach((src) => {
@@ -77,12 +92,18 @@
 </script>
 
 <div class="game">
+	<div class="logo">
+		<button on:click={() => (openSettings = true)}>
+			<img src={`${base}/m5_logo_white.svg`} alt="m5_logo" width="100" height="80" />
+		</button>
+		<p>Memory</p>
+	</div>
 	<div class="board">
 		<!--		PRIZE			-->
 		<p class="prize">
 			Your prize: <br />
 			{#if gameOver && remainingTime !== null}
-				{getPrize(remainingTime, PRIZES)}
+				{getPrize(remainingTime)}
 			{:else}
 				???
 			{/if}
@@ -115,6 +136,8 @@
 			/>
 		</div>
 	</div>
+
+	<PrizeSettings open={openSettings} onClose={() => (openSettings = false)} />
 </div>
 
 <style lang="scss">
@@ -123,6 +146,27 @@
 		height: 100%;
 		display: grid;
 		place-items: center;
+
+		.logo {
+			cursor: pointer;
+			position: absolute;
+			top: 40px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			gap: 20px;
+			font-family: 'Pixel', sans-serif;
+
+			button {
+				all: unset;
+			}
+
+			p {
+				margin: 0;
+				color: white;
+				font-size: 2em;
+			}
+		}
 	}
 
 	.timer {

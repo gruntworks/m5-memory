@@ -3,11 +3,6 @@
 </script>
 
 <div class="game-container pixelated">
-	<div class="logo">
-		<!--		<img src="/m5_logo_white.svg" alt="m5_logo" width=100>-->
-		<p>Memory</p>
-	</div>
-
 	<Memory />
 </div>
 
@@ -46,19 +41,5 @@
 		justify-content: flex-start;
 		background: url('/castle-bg.webp') no-repeat center;
 		background-size: cover;
-	}
-
-	.logo {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 20px;
-		font-family: 'Pixel', sans-serif;
-
-		p {
-			margin: 24px 0;
-			color: white;
-			font-size: 2em;
-		}
 	}
 </style>
