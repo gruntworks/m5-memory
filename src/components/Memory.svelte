@@ -3,6 +3,8 @@
 	import MemoryCard from './MemoryCard.svelte';
 	import { addToDiscovered, discoveredItems } from '../stores/game.store';
 	import Timer from './Timer.svelte';
+	import { onMount } from 'svelte';
+	import { base } from '$app/paths';
 
 	let flippedPair: Array<{ id: number; card: string }> = [];
 	let lockBoard: boolean = false;
@@ -62,6 +64,16 @@
 			gameOver = true;
 		}
 	}
+
+	// PRELOAD ITEMS IMAGES
+	onMount(() => {
+		const imagesToPreload = BASE_CARDS.map((name) => `${base}/items/${name}.png`);
+
+		imagesToPreload.forEach((src) => {
+			const img = new Image();
+			img.src = src;
+		});
+	});
 </script>
 
 <div class="game">
