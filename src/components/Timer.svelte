@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { onMount } from 'svelte';
 
 	export let duration: number;
@@ -66,7 +67,7 @@
 			reset();
 		}}
 	>
-		<img class="pixelated" src="redo.svg" alt="reset" width="64" />
+		<img class="pixelated" src={`${base}/redo.svg`} alt="reset" width="64" />
 	</button>
 </main>
 

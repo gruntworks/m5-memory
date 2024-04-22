@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	export let item: string;
 	export let onFlip: () => void | undefined;
 	export let showItem = false;
@@ -16,7 +17,7 @@
 	style="--random:{Math.random()};"
 >
 	{#if showItem || notDiscovered}
-		<img class="pixelated" src={`/items/${item}.png`} alt={item} width="80" height="80" />
+		<img class="pixelated" src={`${base}/items/${item}.png`} alt={item} width="80" height="80" />
 	{/if}
 </div>
 
