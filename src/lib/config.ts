@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 
-export const GAME_DURATION = 2;
+export const GAME_DURATION = 45;
 
 export const BASE_CARDS = [
 	'Axe',

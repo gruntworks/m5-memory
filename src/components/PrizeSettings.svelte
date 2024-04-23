@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { getPrizesFromLocalStorage, setPrizesToLocalStorage, PRIZES } from '$lib/config';
+	import { setPrizesToLocalStorage, PRIZES } from '$lib/config';
+	import { storagePrizes } from '$lib/stores';
 
 	export let open = false;
 	export let onClose: () => void;
-	let prizes = getPrizesFromLocalStorage() ?? PRIZES;
+	let prizes = $storagePrizes ?? PRIZES;
 
 	// Function to handle input change
 	const handlePrizeNameChange = (key: number, event: Event) => {
@@ -20,6 +21,7 @@
 	// Call this function to save updated prizes when necessary (like before component destruction)
 	const saveUpdatedPrizes = (): void => {
 		setPrizesToLocalStorage(prizes);
+		storagePrizes.set(prizes);
 	};
 
 	// Add new prize

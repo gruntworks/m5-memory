@@ -13,6 +13,7 @@
 	import { onMount } from 'svelte';
 	import { base } from '$app/paths';
 	import PrizeSettings from './PrizeSettings.svelte';
+	import { storagePrizes } from '$lib/stores';
 
 	let flippedPair: Array<{ id: number; card: string }> = [];
 	let lockBoard: boolean = false;
@@ -100,14 +101,21 @@
 	</div>
 	<div class="board">
 		<!--		PRIZE			-->
-		<p class="prize">
-			Your prize: <br />
-			{#if gameOver && remainingTime !== null}
-				{getPrize(remainingTime)}
-			{:else}
-				???
-			{/if}
-		</p>
+		<div class="prize">
+			<div class="prize-list">
+				{#each $storagePrizes ?? PRIZES as { sec, prize }}
+					<span>{sec}+ sec → {prize}</span><br />
+				{/each}
+			</div>
+			<div class="result">
+				Your prize: <br />
+				{#if gameOver && remainingTime !== null}
+					{getPrize(remainingTime)}
+				{:else}
+					???
+				{/if}
+			</div>
+		</div>
 
 		<!--		BOARD			-->
 		{#each shuffledCards as card, index (index)}
@@ -180,13 +188,22 @@
 	.prize {
 		position: absolute;
 		left: 0;
-		margin: auto 0;
 		transform: translateX(-120%);
-		align-self: center;
-		font-family: 'Pixel', sans-serif;
-		font-size: 2.5rem;
+		margin: auto 0;
 		color: #fff;
-		text-align: center;
+		display: grid;
+		place-items: center;
+		align-self: center;
+		.prize-list {
+			font-size: 1.4rem;
+			font-family: 'Pixel', sans-serif;
+			margin-bottom: 24px;
+		}
+		.result {
+			font-family: 'Pixel', sans-serif;
+			font-size: 2.5rem;
+			text-align: center;
+		}
 	}
 
 	.board {
