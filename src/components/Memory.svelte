@@ -32,6 +32,8 @@
 	let shuffledCards = getCards();
 
 	const handleCardFlip = (idx: number, card: string) => {
+		if (lockBoard) return;
+
 		// Start when flipping first
 		gameRunning = true;
 
@@ -50,6 +52,7 @@
 				addToDiscovered(card);
 			}
 			setTimeout(() => {
+				if (!gameRunning) return;
 				flippedPair = [];
 				lockBoard = false;
 			}, 300);
@@ -119,6 +122,7 @@
 
 		<!--		BOARD			-->
 		{#each shuffledCards as card, index (index)}
+			<span>{lockBoard} {gameRunning}</span>
 			<MemoryCard
 				item={card}
 				onFlip={() => (lockBoard ? undefined : handleCardFlip(index, card))}
