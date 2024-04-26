@@ -122,7 +122,6 @@
 
 		<!--		BOARD			-->
 		{#each shuffledCards as card, index (index)}
-			<span>{lockBoard} {gameRunning}</span>
 			<MemoryCard
 				item={card}
 				onFlip={() => (lockBoard ? undefined : handleCardFlip(index, card))}
