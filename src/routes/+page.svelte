@@ -62,7 +62,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		background: url('/castle-bg.png') no-repeat center;
+		background: url('/castle-bg.webp') no-repeat center;
 		background-size: cover;
 	}
 </style>
