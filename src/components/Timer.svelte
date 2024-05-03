@@ -67,7 +67,7 @@
 			reset();
 		}}
 	>
-		<img class="pixelated" src={`${base}/redo.svg`} alt="reset" width="64" />
+		<img class="pixelated" src={`${base}/redo.svg`} alt="reset" width="40" />
 	</button>
 </main>
 
@@ -77,6 +77,9 @@
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
+		display: flex;
+		flex-direction: row;
+		gap: 20px;
 	}
 
 	.reset-button {
@@ -86,7 +89,8 @@
 
 	p {
 		font-family: 'Pixel', sans-serif;
-		font-size: 3rem;
+		font-size: 2rem;
 		color: #fff;
+		margin: 0;
 	}
 </style>

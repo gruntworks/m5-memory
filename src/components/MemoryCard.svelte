@@ -1,9 +1,28 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import { onDestroy } from 'svelte';
 	export let item: string;
 	export let onFlip: () => void | undefined;
 	export let showItem = false;
 	export let notDiscovered = false;
+
+	let windowWidth;
+	let cardSize: number;
+
+	if (!import.meta.env.SSR) {
+		const resizeHandler = () => {
+			windowWidth = window.innerWidth;
+			cardSize =
+				windowWidth <= 768 ? Math.round(windowWidth * 0.17) : Math.round(windowWidth * 0.07);
+		};
+
+		window.addEventListener('resize', resizeHandler);
+		resizeHandler();
+
+		onDestroy(() => {
+			window.removeEventListener('resize', resizeHandler);
+		});
+	}
 </script>
 
 <div
@@ -14,23 +33,30 @@
 	on:keydown={undefined}
 	role="button"
 	tabindex="0"
-	style="--random:{Math.random()};"
+	style="--random:{Math.random()}; width: {cardSize}px; height: {cardSize}px;"
 >
 	{#if showItem || notDiscovered}
-		<img class="pixelated" src={`${base}/items/${item}.png`} alt={item} width="80" height="80" />
+		<img
+			class="pixelated"
+			src={`${base}/items/${item}.png`}
+			alt={item}
+			width={cardSize}
+			height={cardSize}
+		/>
 	{/if}
 </div>
 
 <style lang="scss">
 	.card {
+		-webkit-tap-highlight-color: transparent;
 		border-radius: 8px;
 		cursor: pointer;
 		user-select: none;
 		display: grid;
 		place-items: center;
-		width: 100px;
-		height: 100px;
 		overflow: hidden;
+		min-width: 80px;
+		min-height: 80px;
 
 		&:empty {
 			background: url('/item-bg.png') no-repeat center;

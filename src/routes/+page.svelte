@@ -1,9 +1,32 @@
-<script>
+<script lang="ts">
 	import Memory from '../components/Memory.svelte';
+	import { onDestroy } from 'svelte';
+
+	let windowWidth: number;
+	let layout: 'desktop' | 'mobile' = 'mobile';
+
+	if (!import.meta.env.SSR) {
+		const resizeHandler = () => {
+			windowWidth = window.innerWidth;
+		};
+
+		window.addEventListener('resize', resizeHandler);
+		resizeHandler();
+
+		onDestroy(() => {
+			window.removeEventListener('resize', resizeHandler);
+		});
+	}
+
+	$: if (windowWidth < 768) {
+		layout = 'mobile';
+	} else {
+		layout = 'desktop';
+	}
 </script>
 
 <div class="game-container pixelated">
-	<Memory />
+	<Memory mobileLayout={layout === 'mobile'} />
 </div>
 
 <style lang="scss">
@@ -38,8 +61,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: flex-start;
-		background: url('/castle-bg.webp') no-repeat center;
+		justify-content: center;
+		background: url('/castle-bg.png') no-repeat center;
 		background-size: cover;
 	}
 </style>

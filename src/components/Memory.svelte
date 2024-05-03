@@ -15,6 +15,8 @@
 	import PrizeSettings from './PrizeSettings.svelte';
 	import { storagePrizes } from '$lib/stores';
 
+	export let mobileLayout: boolean;
+
 	let flippedPair: Array<{ id: number; card: string }> = [];
 	let lockBoard: boolean = false;
 	let gameOver = false;
@@ -95,57 +97,84 @@
 	});
 </script>
 
-<div class="game">
+<div class="game" class:mobile={mobileLayout}>
 	<div class="logo">
 		<button on:click={() => (openSettings = true)}>
 			<img src={`${base}/m5_logo_white.svg`} alt="m5_logo" width="100" height="80" />
 		</button>
 		<p>Memory</p>
 	</div>
-	<div class="board">
-		<!--		PRIZE			-->
-		<div class="prize">
-			<div class="prize-list">
-				{#each $storagePrizes ?? PRIZES as { sec, prize }}
-					<span>{sec}+ sec → {prize}</span><br />
-				{/each}
+
+	<div class="board" class:mobile={mobileLayout}>
+		<!--		MOBILE timer			-->
+		{#if mobileLayout}
+			<div class="timer">
+				<Timer
+					duration={gameDuration}
+					ticking={gameRunning}
+					onReset={resetBoard}
+					onStop={(time) => {
+						remainingTime = time;
+					}}
+					onTimeout={() => {
+						lockBoard = true;
+						gameRunning = false;
+						gameOver = true;
+					}}
+				/>
 			</div>
-			<div class="result">
-				Your prize: <br />
-				{#if gameOver && remainingTime !== null}
-					{getPrize(remainingTime)}
-				{:else}
-					???
-				{/if}
+		{/if}
+
+		{#if !mobileLayout}
+			<!--		PRIZE			-->
+			<div class="prize">
+				<div class="prize-list">
+					{#each $storagePrizes ?? PRIZES as { sec, prize }}
+						<span>{sec}+ sec → {prize}</span><br />
+					{/each}
+				</div>
+				<div class="result">
+					Your prize: <br />
+					{#if gameOver && remainingTime !== null}
+						{getPrize(remainingTime)}
+					{:else}
+						???
+					{/if}
+				</div>
 			</div>
-		</div>
+		{/if}
 
 		<!--		BOARD			-->
-		{#each shuffledCards as card, index (index)}
-			<MemoryCard
-				item={card}
-				onFlip={() => (lockBoard ? undefined : handleCardFlip(index, card))}
-				showItem={flippedPair.some((item) => item.id === index) || $discoveredItems.includes(card)}
-				notDiscovered={gameOver && !$discoveredItems.includes(card)}
-			/>
-		{/each}
-
-		<!--		TIMER			-->
-		<div class="timer">
-			<Timer
-				duration={gameDuration}
-				ticking={gameRunning}
-				onReset={resetBoard}
-				onStop={(time) => {
-					remainingTime = time;
-				}}
-				onTimeout={() => {
-					lockBoard = true;
-					gameRunning = false;
-					gameOver = true;
-				}}
-			/>
+		<div class="cards">
+			{#each shuffledCards as card, index (index)}
+				<MemoryCard
+					item={card}
+					onFlip={() => (lockBoard ? undefined : handleCardFlip(index, card))}
+					showItem={flippedPair.some((item) => item.id === index) ||
+						$discoveredItems.includes(card)}
+					notDiscovered={gameOver && !$discoveredItems.includes(card)}
+				/>
+			{/each}
 		</div>
+
+		<!--		DESKTOP timer			-->
+		{#if !mobileLayout}
+			<div class="timer">
+				<Timer
+					duration={gameDuration}
+					ticking={gameRunning}
+					onReset={resetBoard}
+					onStop={(time) => {
+						remainingTime = time;
+					}}
+					onTimeout={() => {
+						lockBoard = true;
+						gameRunning = false;
+						gameOver = true;
+					}}
+				/>
+			</div>
+		{/if}
 	</div>
 
 	<PrizeSettings open={openSettings} onClose={() => (openSettings = false)} />
@@ -153,15 +182,17 @@
 
 <style lang="scss">
 	.game {
-		width: 100%;
-		height: 100%;
 		display: grid;
 		place-items: center;
+		&.mobile {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
 
 		.logo {
 			cursor: pointer;
-			position: absolute;
-			top: 40px;
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -181,24 +212,20 @@
 	}
 
 	.timer {
-		position: absolute;
-		right: 0;
 		margin: auto 0;
-		transform: translateX(100%);
 		align-self: center;
 	}
 
 	.prize {
-		position: absolute;
 		left: 0;
-		transform: translateX(-120%);
 		margin: auto 0;
 		color: #fff;
 		display: grid;
 		place-items: center;
 		align-self: center;
+		padding: 16px;
 		.prize-list {
-			font-size: 1.4rem;
+			font-size: 1.2rem;
 			font-family: 'Pixel', sans-serif;
 			margin-bottom: 24px;
 		}
@@ -210,14 +237,35 @@
 	}
 
 	.board {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		grid-template-rows: repeat(4, 1fr);
-		gap: 6px;
-		background-color: rgba(0, 0, 0, 0.4);
-		padding: 8px;
-		border-radius: 8px;
-		margin: auto;
-		position: relative;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		.cards {
+			display: grid;
+			grid-template-columns: repeat(5, 1fr);
+			grid-template-rows: repeat(4, 1fr);
+			gap: 6px;
+			background-color: rgba(0, 0, 0, 0.4);
+			padding: 8px;
+			border-radius: 8px;
+			margin: auto;
+			position: relative;
+		}
+		&.mobile {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			.cards {
+				grid-template-columns: repeat(4, 1fr);
+				grid-template-rows: repeat(5, 1fr);
+				padding: 0;
+				gap: 2px;
+			}
+			.timer {
+				all: unset;
+			}
+		}
 	}
 </style>
