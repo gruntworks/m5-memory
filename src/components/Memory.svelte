@@ -24,6 +24,7 @@
 	let gameDuration = GAME_DURATION;
 	let remainingTime: number | null = null;
 	let openSettings: boolean = false;
+	let hidePrizeModal = true;
 
 	const getCards = () => {
 		const cards = BASE_CARDS.flatMap((card) => [card, card]);
@@ -77,6 +78,9 @@
 			lockBoard = true;
 			gameRunning = false;
 			gameOver = true;
+		}
+		if (!gameRunning) {
+			hidePrizeModal = false;
 		}
 	}
 
@@ -178,18 +182,38 @@
 	</div>
 
 	<PrizeSettings open={openSettings} onClose={() => (openSettings = false)} />
+
+	<!--	MOBILE prize modal-->
+	{#if mobileLayout && gameOver && remainingTime !== null && !hidePrizeModal}
+		<!--		PRIZE			-->
+		<div class="prize modal">
+			<button
+				on:click={() => (hidePrizeModal = true)}
+				style="all: unset; position: absolute; right: 12px; top: 12px"
+				><img class="pixelated" src={`${base}/close.webp`} alt="reset" width="73" /></button
+			>
+			<div class="prize-list">
+				{#each $storagePrizes ?? PRIZES as { sec, prize }}
+					<span>{sec}+ sec → {prize}</span><br />
+				{/each}
+			</div>
+			<div class="result">
+				Remaining time: {remainingTime} sec <br /> <br />
+				Your prize: <br />
+				{#if gameOver && remainingTime !== null}
+					{getPrize(remainingTime)}
+				{:else}
+					???
+				{/if}
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
 	.game {
 		display: grid;
 		place-items: center;
-		&.mobile {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-		}
 
 		.logo {
 			cursor: pointer;
@@ -209,6 +233,18 @@
 				font-size: 2em;
 			}
 		}
+
+		&.mobile {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+
+			.logo {
+				position: fixed;
+				top: 0;
+			}
+		}
 	}
 
 	.timer {
@@ -224,15 +260,33 @@
 		place-items: center;
 		align-self: center;
 		padding: 16px;
+
+		&.modal {
+			width: 100%;
+			height: 100%;
+			position: fixed;
+			background-color: rgba(0, 0, 0, 0.5);
+			backdrop-filter: blur(4px);
+			padding: 0;
+
+			.prize-list {
+				font-size: 1.5rem;
+			}
+		}
+
 		.prize-list {
 			font-size: 1.2rem;
 			font-family: 'Pixel', sans-serif;
 			margin-bottom: 24px;
 		}
+
 		.result {
 			font-family: 'Pixel', sans-serif;
-			font-size: 2.5rem;
+			font-size: 1.5rem;
 			text-align: center;
+			background-color: rgb(58, 136, 118);
+			border-radius: 12px;
+			padding: 12px;
 		}
 	}
 
@@ -241,6 +295,7 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
+
 		.cards {
 			display: grid;
 			grid-template-columns: repeat(5, 1fr);
@@ -252,19 +307,23 @@
 			margin: auto;
 			position: relative;
 		}
+
 		&.mobile {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
+
 			.cards {
 				grid-template-columns: repeat(4, 1fr);
 				grid-template-rows: repeat(5, 1fr);
 				padding: 0;
 				gap: 2px;
 			}
+
 			.timer {
 				all: unset;
+				margin-bottom: 40px;
 			}
 		}
 	}

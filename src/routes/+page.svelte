@@ -62,7 +62,11 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		background: url('/castle-bg.webp') no-repeat center;
 		background-size: cover;
+
+		background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5)),
+			url('/castle-bg.webp');
+		background-blend-mode: overlay;
+		background-repeat: no-repeat;
 	}
 </style>
