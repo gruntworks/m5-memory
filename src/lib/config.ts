@@ -25,13 +25,11 @@ export const EXTRA_CARDS = [
 ];
 
 export const PRIZES = [
-	{ sec: 0, prize: 'Penkala' },
-	{ sec: 4, prize: 'Loptica' },
-	{ sec: 8, prize: 'Sticker' },
-	{ sec: 10, prize: 'Lepeza' },
-	{ sec: 16, prize: 'Notes' },
-	{ sec: 19, prize: 'Torba' },
-	{ sec: 22, prize: 'T-Shirt' }
+	{ sec: 0, prize: 'Kemijska' },
+	{ sec: 5, prize: 'Loptica ili Sticker' },
+	{ sec: 10, prize: 'Lepeza ili Notes' },
+	{ sec: 15, prize: 'Torba ili Čarape' },
+	{ sec: 20, prize: 'Majica ili Kapa' }
 ];
 
 export function getPrize(timeRemaining: number): string {
