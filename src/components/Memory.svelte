@@ -275,6 +275,7 @@
 		}
 
 		.prize-list {
+			display: none;
 			font-size: 1.2rem;
 			font-family: 'Pixel', sans-serif;
 			margin-bottom: 24px;
@@ -292,7 +293,7 @@
 
 	.board {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 

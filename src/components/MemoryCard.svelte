@@ -13,7 +13,7 @@
 		const resizeHandler = () => {
 			windowWidth = window.innerWidth;
 			cardSize =
-				windowWidth <= 768 ? Math.round(windowWidth * 0.17) : Math.round(windowWidth * 0.07);
+				windowWidth <= 1024 ? Math.round(windowWidth * 0.18) : Math.round(windowWidth * 0.07);
 		};
 
 		window.addEventListener('resize', resizeHandler);
@@ -55,8 +55,8 @@
 		display: grid;
 		place-items: center;
 		overflow: hidden;
-		min-width: 80px;
-		min-height: 80px;
+		//min-width: 80px;
+		//min-height: 80px;
 
 		&:empty {
 			background: url('/item-bg.png') no-repeat center;
